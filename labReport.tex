@@ -42,7 +42,9 @@
 
 \ctexset {
 	chapter = {
-		name = {实验, },
+		name = { },
+		number = \arabic{section},
+		format = \Large\bfseries,
 	},
 	section = {
 		number = \arabic{section},
@@ -52,7 +54,7 @@
 		number = \arabic{section}.\arabic{subsection},
 	}
 }
-
+\title{图像平滑：以中值滤波为例}
 \begin{document}
 	\begin{titlepage} % 封面
 		\begin{center}
@@ -75,21 +77,22 @@
 		{\zihao{4} \songti 使用\LaTeX 撰写于\today}
 		\end{center}
 	\end{titlepage}
+	
 \tableofcontents % 目录
-\chapter{图像平滑：以中值滤波为例}
-\section{实验目的}
+
+\chapter{实验目的}
 
 \begin{enumerate}
 \item 掌握图像平滑的基本概念，以及常用的方法；
 \item 了解不同滤波方法的原理，并可以编程实现。
 \end{enumerate}
-\section{实验要求}
+\chapter{实验要求}
 \begin{enumerate}
 \item 使用C++编程实现中值滤波，但不能直接调用OpenCV中的滤波函数；
 \item 将处理结果与OpenCV中的平滑处理函数\lstinline|medianBlur()|的处理结果做对比。
 \end{enumerate}
 
-\section{实验过程}
+\chapter{实验过程}
 
 中值滤波的原理很简单，它把以某像素为中心的小窗口内的所有像素的灰度按从小到大排序，取排序结果的中间值作为该像素的灰度值。
 
@@ -136,6 +139,6 @@ void medianfilter(element* image, element* result, int N, int M)
 	delete[] extension;
 }
 \end{lstlisting}
-\section{实验总结}
+\chapter{实验总结}
 
 \end{document}
