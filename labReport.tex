@@ -2,7 +2,7 @@
 \usepackage[colorlinks,linkcolor=black]{hyperref}
 \usepackage{listings, geometry, amsmath}
 \usepackage[colorinlistoftodos]{todonotes}
-
+\usepackage{graphicx}
 %\setmonofont[Mapping={}]{Monaco}	%英文引号之类的正常显示，相当于设置英文字体
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -80,21 +80,60 @@
 \section{实验目的}
 
 \begin{enumerate}
-\item 掌握图像平滑的基本概念
-\item test
+\item 掌握图像平滑的基本概念，以及常用的方法；
+\item 了解不同滤波方法的原理，并可以编程实现。
 \end{enumerate}
 \section{实验要求}
+\begin{enumerate}
+\item 使用C++编程实现中值滤波，但不能直接调用OpenCV中的滤波函数；
+\item 将处理结果与OpenCV中的平滑处理函数\lstinline|medianBlur()|的处理结果做对比。
+\end{enumerate}
 
-\section{实验内容}
+\section{实验过程}
 
-\section{实验步骤}
-输出helloworld:
+中值滤波的原理很简单，它把以某像素为中心的小窗口内的所有像素的灰度按从小到大排序，取排序结果的中间值作为该像素的灰度值。
+
+首先是放置窗口，这里我们通过改变开始的索引值来放置窗口。
 
 \begin{lstlisting}
-#include <stdio.h>
-int main() {
-	printf("Hello World!\n");
-	return 0;
+for (int m = 1; m < M - 1; ++m)
+		for (int n = 1; n < N - 1; ++n)
+\end{lstlisting}
+
+注意，这里是从第1个元素开始，而不是第0个元素；倒数第1个元素结束，而不是最后一个元素。问题就是我们无法从第0个元素开始，因为在这种情况下，过滤窗口的左半部分是空的。为了解决这个问题，我们需要在处理之前，对图像的进行扩展，方法如下图\ref {fig:imgExt}所示：
+\begin{figure}
+\centering
+\includegraphics{img/extendImg.png}
+\caption{图像扩展}
+\label{fig:imgExt}
+\end{figure}
+
+\begin{lstlisting}
+void medianfilter(element* image, element* result, int N, int M)
+{
+	//   Check arguments
+	if (!image || N < 1 || M < 1)
+		return;
+	//   Allocate memory for signal extension
+	element* extension = new element[(N + 2) * (M + 2)];
+	//   Check memory allocation
+	if (!extension)
+		return;
+	//   Create image extension
+	for (int i = 0; i < M; ++i)
+	{
+		memcpy(extension + (N + 2) * (i + 1) + 1, image + N * i, N * sizeof(element));
+		extension[(N + 2) * (i + 1)] = image[N * i];
+		extension[(N + 2) * (i + 2) - 1] = image[N * (i + 1) - 1];
+	}
+	//   Fill first line of image extension
+	memcpy(extension, extension + N + 2, (N + 2) * sizeof(element));
+	//   Fill last line of image extension
+	memcpy(extension + (N + 2) * (M + 1), extension + (N + 2) * M, (N + 2) * sizeof(element));
+	//   Call median filter implementation
+	_medianfilter(extension, result ? result : image, N + 2, M + 2);
+	//   Free memory
+	delete[] extension;
 }
 \end{lstlisting}
 \section{实验总结}
