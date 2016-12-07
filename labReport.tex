@@ -86,7 +86,7 @@
 \section{实验要求}
 \begin{enumerate}
 \item 使用C++编程实现中值滤波，但不能直接调用OpenCV中的滤波函数；
-\item 将处理结果与OpenCV中的平滑处理函数\lstinline|medianBlur()|的处理结果做对比。
+\item 将处理结果与OpenCV中的平滑处理函数\lstinline{medianBlur()}的处理结果做对比。
 \end{enumerate}
 
 \section{实验过程}
@@ -107,14 +107,9 @@ for (int m = 1; m < M - 1; ++m)
 \caption{图像扩展}
 \label{fig:imgExt}
 \end{figure}
-
+因此，在对图像进行中值滤波之前，先对图片进行扩展，代码实现如下所示：
 \begin{lstlisting}
-void medianfilter(element* image, element* result, int N, int M)
-{
-	//   Check arguments
-	if (!image || N < 1 || M < 1)
-		return;
-	//   Allocate memory for signal extension
+//   Allocate memory for signal extension
 	element* extension = new element[(N + 2) * (M + 2)];
 	//   Check memory allocation
 	if (!extension)
@@ -131,11 +126,68 @@ void medianfilter(element* image, element* result, int N, int M)
 	//   Fill last line of image extension
 	memcpy(extension + (N + 2) * (M + 1), extension + (N + 2) * M, (N + 2) * sizeof(element));
 	//   Call median filter implementation
-	_medianfilter(extension, result ? result : image, N + 2, M + 2);
-	//   Free memory
-	delete[] extension;
-}
 \end{lstlisting}
+接下来第二步就是取出窗口中的元素，保存在数组\lstinline{window[]}中。
+\begin{lstlisting}
+			//   Pick up window elements
+			int k = 0;
+			element window[9];
+			for (int j = m - 1; j < m + 2; ++j)
+				for (int i = n - 1; i < n + 2; ++i)
+					window[k++] = image[j * N + i];
+\end{lstlisting}
+
+第三步就是把窗口中的元素排序。但是在这里我们将会使用一个代码优化的技巧：由于我们需要的仅仅是中值，所以只需要对一半的元素排序就可以了。
+
+\begin{lstlisting}
+//   Order elements (only half of them)
+			for (int j = 0; j < 5; ++j)
+			{
+				//   Find position of minimum element
+				int min = j;
+				for (int l = j + 1; l < 9; ++l)
+					if (window[l] < window[min])
+						min = l;
+				//   Put found minimum element in its place
+				const element temp = window[j];
+				window[j] = window[min];
+				window[min] = temp;
+			}
+\end{lstlisting}
+
+最后一步，将得到的中值作为该点像素的灰度值。
+
+\begin{lstlisting}
+//   Get result - the middle element
+			result[(m - 1) * (N - 2) + n - 1] = window[4];
+\end{lstlisting}
+
+上述过程即为中值滤波的完整的处理过程，为了方便使用，我们将上述处理过程写在两个函数中。处理前的扩展函数\lstinline{medianfilter()}，负责对图像进行扩展，并将扩展好的图像传递给中值滤波函数，其函数参数为原图像指针\lstinline{image}、结果图像指针\lstinline{result}、图像宽度\lstinline{N}、图像高度\lstinline{M}；中值滤波函数\lstinline{\_medianfilter()}的工作就是对扩展好的函数进行滤波处理，其函数参数与\lstinline{medianfilter()}相同。
+为了将处理结果与OpenCV中的平滑处理函数\lstinline{medianBlur()}的处理结果做对比，我们将函数\lstinline{medianBlur()}的第三个参数卷积核的长度设置为3，即与前面的窗口宽度值保持一致。
+
+\begin{lstlisting}
+medianBlur(src, dst, 3);
+\end{lstlisting}
+
+\section{实验结果}
+
+\begin{figure}
+\centering
+\includegraphics{img/originalImage.PNG}
+\caption{原始图像}
+\label {fig:previous}
+\end{figure}
+
+下图\ref {fig:firtProc}为不使用OpenCV库函数对图像进行中值滤波的处理结果，卷积核的大小为$3\times3$。
+
+
+\begin{figure}
+\centering
+\includegraphics{img/processedImage1.PNG}
+\caption{第一次处理后的图像}
+\label{fig:firtProc}
+\end{figure}
+
 \section{实验总结}
 
 \end{document}
