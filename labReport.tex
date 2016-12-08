@@ -171,22 +171,24 @@ medianBlur(src, dst, 3);
 
 \section{实验结果}
 
-\begin{figure}
+下图\ref {fig:previous}为原始图像，该图像具有大量的椒盐噪声。
+
+\begin{figure}[h]
 \centering
-\includegraphics{img/originalImage.PNG}
+\includegraphics[height=5cm]{img/impulseNoise.pdf}
 \caption{原始图像}
 \label {fig:previous}
 \end{figure}
 
 下图\ref {fig:firtProc}为不使用OpenCV库函数对图像进行中值滤波的处理结果，卷积核的大小为$3\times3$。
 
-
-\begin{figure}
+\begin{figure}[h]
 \centering
-\includegraphics{img/processedImage1.PNG}
-\caption{第一次处理后的图像}
+\includegraphics[height=5cm]{img/processedImage1.pdf}
+\caption{未使用OpenCV处理后的图像}
 \label{fig:firtProc}
 \end{figure}
+
 
 \section{实验总结}
 
