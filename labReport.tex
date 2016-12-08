@@ -4,6 +4,7 @@
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{graphicx}
 \usepackage{varwidth}
+\usepackage{float}
 %\setmonofont[Mapping={}]{Monaco}	%英文引号之类的正常显示，相当于设置英文字体
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -76,7 +77,7 @@
 		{\zihao{4} \songti 使用\LaTeX 撰写于\today}
 		\end{center}
 	\end{titlepage}
-\tableofcontents % 目录
+\tableofcontents\thispagestyle{empty} % 目录
 \chapter{图像平滑：以中值滤波为例}
 \section{实验目的}
 
@@ -164,7 +165,7 @@ for (int m = 1; m < M - 1; ++m)
 \end{lstlisting}
 
 上述过程即为中值滤波的完整的处理过程，为了方便使用，我们将上述处理过程写在两个函数中。处理前的扩展函数\lstinline{medianfilter()}，负责对图像进行扩展，并将扩展好的图像传递给中值滤波函数，其函数参数为原图像指针\lstinline{image}、结果图像指针\lstinline{result}、图像宽度\lstinline{N}、图像高度\lstinline{M}；中值滤波函数\lstinline{\_medianfilter()}的工作就是对扩展好的函数进行滤波处理，其函数参数与\lstinline{medianfilter()}相同。
-为了将处理结果与OpenCV中的平滑处理函数\lstinline{medianBlur()}的处理结果做对比，我们将函数\lstinline{medianBlur()}的第三个参数卷积核的长度设置为3，即与前面的窗口宽度值保持一致。
+为了将处理结果与OpenCV中的平滑处理函数\lstinline{medianBlur()}的处理结果做对比，我们将函数\lstinline{medianBlur()}的第三个参数模版核的长度设置为3，即与前面的窗口宽度值保持一致。
 
 \begin{lstlisting}
 medianBlur(src, dst, 3);
@@ -176,19 +177,31 @@ medianBlur(src, dst, 3);
 
 \begin{figure}[h]
 \centering
+\begin{varwidth}[t]{\textwidth}
+\vspace{0pt}
+\centering
 \includegraphics[height=5cm]{img/impulseNoise.pdf}
 \caption{椒盐噪声图像}
 \label {fig:previous}
+\end{varwidth}%
+\quad
+\begin{varwidth}[t]{\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[height=5cm]{img/scratchNoises.pdf}
+\caption{充满了抓痕的图像}
+\label{fig:scratchedImg}
+\end{varwidth}
 \end{figure}
 
-下图\ref {fig:firtProc}为不使用OpenCV库函数对图像进行中值滤波的处理结果，卷积核的大小为$3\times3$。
+下图\ref {fig:firtProc}为不使用OpenCV库函数对图像进行中值滤波的处理结果，模版核的大小为$3\times3$。
 
 \begin{figure}[h]
 \centering
 \begin{varwidth}[t]{\textwidth}
 \vspace{0pt}
 \includegraphics[height=5cm]{img/processedImage1.pdf}
-\caption{未使用OpenCV处理后的图像}
+\caption{未使用OpenCV库函数处理的图像}
 \label{fig:firtProc}
 \end{varwidth}%
 \quad
@@ -196,39 +209,43 @@ medianBlur(src, dst, 3);
 \vspace{0pt}
 \centering
 \includegraphics[height=5cm]{img/processedImage2.pdf}
-\caption{使用OpenCV库函数处理后的图像}
+\caption{使用OpenCV库函数处理的图像}
 \label{fig:secondProc}
 \end{varwidth}
 \end{figure}
 
-\begin{figure}[h]
-\centering
-\includegraphics[height=5cm]{img/scratchNoises.pdf}
-\caption{充满了抓痕的图像}
-\label{fig:scratchedImg}
-\end{figure}
+
+从图中，不难看出两次处理结果基本相同，差别很小。为了进一步验证上述程序的正确性，我们有对另一种噪声的图像做了相同的处理。
 
 图\ref{fig:scratchedImg}为一张充满了抓痕噪声的图片，同样采用两种方式对其做中值滤波。
 
+结果如下图\ref{fig:thirdProc}和图\ref{fig:forthProc}所示，同样，两次处理结果基本相同。
 
-\begin{figure}[h]
+经过上面两次测试，说明前面编写的程序基本没什么问题，很出色地完成了中值滤波，图像修复得也比较好。
+
+\begin{figure}[H]
 \centering
 \begin{varwidth}[t]{\textwidth}
 \vspace{0pt}
 \includegraphics[height=5cm]{img/processedImage3.pdf}
-\caption{未使用OpenCV处理后的图像}
-\label{fig:firtProc}
+\caption{未使用OpenCV库函数处理的图像}
+\label{fig:thirdProc}
 \end{varwidth}%
 \quad
 \begin{varwidth}[t]{\textwidth}
 \vspace{0pt}
 \centering
 \includegraphics[height=5cm]{img/processedImage4.pdf}
-\caption{使用OpenCV库函数处理后的图像}
-\label{fig:secondProc}
+\caption{使用OpenCV库函数处理的图像}
+\label{fig:forthProc}
 \end{varwidth}
 \end{figure}
 
+
 \section{实验总结}
+
+本次实验主要是为了帮助理解并掌握图像平滑的基本理论和常用方法。为了进一步学习图像平滑的常用方法，特以中值滤波为例，使用C++编程来实现图像的滤波。为了验证程序的正确性，还使用OpenCV的库函数进行同样的操作，并将二者的结果进行对比。
+
+在此次实验中，我不仅学会了如何编程实现中值滤波，掌握了中值滤波的方法，而且我还学会了如何在OpenCV中加载图像、显示图像、保存图像以及调用滤波函数来对图像进行处理。
 
 \end{document}
