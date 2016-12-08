@@ -3,6 +3,7 @@
 \usepackage{listings, geometry, amsmath}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{graphicx}
+\usepackage{varwidth}
 %\setmonofont[Mapping={}]{Monaco}	%英文引号之类的正常显示，相当于设置英文字体
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -101,9 +102,9 @@ for (int m = 1; m < M - 1; ++m)
 \end{lstlisting}
 
 注意，这里是从第1个元素开始，而不是第0个元素；倒数第1个元素结束，而不是最后一个元素。问题就是我们无法从第0个元素开始，因为在这种情况下，过滤窗口的左半部分是空的。为了解决这个问题，我们需要在处理之前，对图像的进行扩展，方法如下图\ref {fig:imgExt}所示：
-\begin{figure}
+\begin{figure}[h]
 \centering
-\includegraphics{img/extendImg.png}
+\includegraphics[height=5cm]{img/extendImg.png}
 \caption{图像扩展}
 \label{fig:imgExt}
 \end{figure}
@@ -176,7 +177,7 @@ medianBlur(src, dst, 3);
 \begin{figure}[h]
 \centering
 \includegraphics[height=5cm]{img/impulseNoise.pdf}
-\caption{原始图像}
+\caption{椒盐噪声图像}
 \label {fig:previous}
 \end{figure}
 
@@ -184,11 +185,49 @@ medianBlur(src, dst, 3);
 
 \begin{figure}[h]
 \centering
+\begin{varwidth}[t]{\textwidth}
+\vspace{0pt}
 \includegraphics[height=5cm]{img/processedImage1.pdf}
 \caption{未使用OpenCV处理后的图像}
 \label{fig:firtProc}
+\end{varwidth}%
+\quad
+\begin{varwidth}[t]{\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[height=5cm]{img/processedImage2.pdf}
+\caption{使用OpenCV库函数处理后的图像}
+\label{fig:secondProc}
+\end{varwidth}
 \end{figure}
 
+\begin{figure}[h]
+\centering
+\includegraphics[height=5cm]{img/scratchNoises.pdf}
+\caption{充满了抓痕的图像}
+\label{fig:scratchedImg}
+\end{figure}
+
+图\ref{fig:scratchedImg}为一张充满了抓痕噪声的图片，同样采用两种方式对其做中值滤波。
+
+
+\begin{figure}[h]
+\centering
+\begin{varwidth}[t]{\textwidth}
+\vspace{0pt}
+\includegraphics[height=5cm]{img/processedImage3.pdf}
+\caption{未使用OpenCV处理后的图像}
+\label{fig:firtProc}
+\end{varwidth}%
+\quad
+\begin{varwidth}[t]{\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[height=5cm]{img/processedImage4.pdf}
+\caption{使用OpenCV库函数处理后的图像}
+\label{fig:secondProc}
+\end{varwidth}
+\end{figure}
 
 \section{实验总结}
 
